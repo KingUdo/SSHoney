@@ -108,17 +108,6 @@ for usall in cursor.fetchall():
         us.write(str(usall[0]) + " \n")
 
 
-#print(USList)
-#print(USNList)
-#print(PWList)
-#print(PWNList)
-#print(IPList)
-#print(LOCList)
-
-#print(IPNumber)
-#print(USNumber)
-#print(PWNumber)
-
 connection.commit()
 connection.close()
 
