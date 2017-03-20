@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """
+PSHIT:
 Copyright(C) 2014, Eric Leblond
 Written by Eric Leblond <eric@regit.org>
-
 
 Software based on demo_server.py example provided in paramiko
 Copyright (C) 2003-2007  Robey Pointer <robeypointer@gmail.com>
@@ -46,9 +46,10 @@ except:
     have_daemon = False
 
 parser = argparse.ArgumentParser(description='Passwords of SSH Intruders Transferred to Text')
-parser.add_argument('-o', '--output', default='/home/lars/ServerStuff/SSHoney/passwords.log', help='File to export collected data')
-parser.add_argument('-k', '--key', default='/home/lars/ServerStuff/SSHoney/test_rsa.key', help='Host RSA key')
-parser.add_argument('-l', '--log', default='/home/lars/ServerStuff/SSHoney/pshitt.log', help='File to log info and debug')
+parser.add_argument('-o', '--output', default='passwords.log', help='File to export collected data')
+parser.add_argument('-k', '--key', default='test_rsa.key', help='Host RSA key')
+parser.add_argument('-d', '--db', default='pw_us_drop.db', help='Path to DB file')
+parser.add_argument('-l', '--log', default='pshitt.log', help='File to log info and debug')
 parser.add_argument('-p', '--port', type=int, default=22, help='TCP port to listen to')
 parser.add_argument('-t', '--threads', type=int, default=50, help='Maximum number of client threads')
 parser.add_argument('-V', '--version', default='SSH-2.0-OpenSSH_6.6.1p1 Debian-5', help='SSH local version to advertise')
@@ -77,16 +78,19 @@ if not os.path.isabs(args.key):
 if not os.path.isabs(args.log):
     args.log = os.path.join(os.getcwd(), args.log)
 
+if not os.path.isabs(args.db):
+    args.db = os.path.join(os.getcwd(), args.db)
+
 #SQLITE
 
-if os.path.isfile("/home/lars/ServerStuff/SSHoney/pw_us_drop.db"):
+if os.path.isfile(args.db):
 	print "File vorhanden"
-	connection = sqlite3.connect("/home/lars/ServerStuff/SSHoney/pw_us_drop.db")
+	connection = sqlite3.connect(args.db)
 	cursor = connection.cursor()
 
 else:
 	print "File nicht vorhanden"
-	connection = sqlite3.connect("/home/lars/ServerStuff/SSHoney/pw_us_drop.db")
+	connection = sqlite3.connect(args.db)
 	cursor = connection.cursor()
 							#create Table log with number(key), timestamp, pw, us, ip
 	sql_command = """
@@ -128,7 +132,7 @@ class Server (paramiko.ServerInterface):
         self.logfile.write('\n')
         self.logfile.flush()
 
-	connection = sqlite3.connect("/home/lars/ServerStuff/SSHoney/pw_us_drop.db")
+	connection = sqlite3.connect(args.db)
 	cursor = connection.cursor()
 
 	#create the SQL Command
